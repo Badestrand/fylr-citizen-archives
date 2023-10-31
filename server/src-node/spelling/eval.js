@@ -100,7 +100,7 @@ async function loadSpellcheckerDE(context) {
 	}
 
 	return new Promise((resolve, reject) => {
-		fs.readFile(fullFilePath, (err, dictDERaw) => {
+		fs.readFile(fullFilePath, {encoding: 'utf8'}, (err, dictDERaw) => {
 			if (err) return reject(err)
 			try {
 				const dictDE = JSON.parse(dictDERaw)

@@ -125,10 +125,10 @@ async function evaluate(context, input) {
 		promise.then((result) => {
 			o = result
 		})
-		promise.catch((err) => {
+		.catch((err) => {
 			o.error = err.response?.data?.error?.message ?? err.message
 		})
-		promise.finally(() => {
+		.finally(() => {
 			switch (key) {
 				case 'german':
 					if (context.config.flagNonGermanEnabled && o.rating===false) {
