@@ -1,0 +1,7 @@
+## Run on test instance of Fylr
+
+```
+cd /srv/fylr/config/fylr/extensions-plugins/fylr-plugin-citizenarchives
+
+make all && docker restart fylr && docker logs -f --tail 100 fylr
+```
