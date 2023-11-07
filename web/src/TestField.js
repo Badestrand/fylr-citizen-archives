@@ -84,7 +84,7 @@ class TestFieldConfig extends BaseConfigPlugin {
                     if (typeof rating === 'boolean') {
                         text += rating? 'okay' : 'nicht okay'
                     } else {
-                        text += Math.round(rating*100)+'% schlecht bei Schwellwert von '+Math.round(threshold*100)+'%'
+                        text += Math.round(rating*100)+'% problematisch bei Schwellwert von '+Math.round(threshold*100)+'%'
                     }
                     text += '\n'
                     for (const descr in details) {

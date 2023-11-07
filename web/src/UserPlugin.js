@@ -1,51 +1,10 @@
 // More or less copied from https://github.com/programmfabrik/easydb-example-plugin/blob/master/src/webfrontend/ExampleUserPlugin.coffee
 
-/*class CitizenArchivesUserPlugin extends ez5.UserPlugin {
-	getTabs(tabs) {
-		tabs.push({
-			name: "citizenarchives-userplugin",
-			text: "Citizen Archives User Plugin",
-			content: () => {
-				const form = new CUI.Form({
-					data: this._user.data.user,
-					name: "citizen_archives_userdata",
-					fields: [
-						{
-							type: CUI.Input,
-							name: "already_tagged_count",
-							form: {
-								label: "Anzahl schon getaggter Beiträge",
-								hint: "Auf 0 zurücksetzen, um dem Nutzer wieder eine weiße Weste zu geben. Auf 1000 setzen, um alle zukünftigen Beiträge des Nutzers automatisch zu taggen."
-							}
-						}
-					]
-				})
-				return form.start()
-			}
-		})
-	}
-
-	getSaveData(saveData) {
-		saveData.user.custom_data.my_field = this._user.data.user.custom_data.my_field
-	}
-
-	isAllowed() {
-		return true
-		// return this._user.data.user.type in ["easydb", "system"]
-	}
-}
-
-
-ez5.User.plugins.registerPlugin(CitizenArchivesUserPlugin)
-*/
-
-
-var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-	hasProp = {}.hasOwnProperty;
-
 
 
 ez5.CitizenArchivesUserPlugin = (function(superClass) {
+	const extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; }, hasProp = {}.hasOwnProperty;
+
 	extend(CitizenArchivesUserPlugin, superClass)
 
 	function CitizenArchivesUserPlugin() {
@@ -70,6 +29,54 @@ ez5.CitizenArchivesUserPlugin = (function(superClass) {
 								label: $$("citizenarchives.user.plugin.form.id.label"),
 								hint: $$("citizenarchives.user.plugin.form.id.hint.md")
 							},
+						}, {
+							type: CUI.Input,
+							name: "citizenarchives__submitted_day_crnt",
+							form: {
+								label: $$("citizenarchives.user.plugin.form.sday.label"),
+								hint: $$("citizenarchives.user.plugin.form.hint.dontchange")
+							},
+						}, {
+							type: CUI.NumberInput,
+							min: 0,
+							max: 10000,
+							name: "citizenarchives__submitted_day",
+							form: {
+								label: $$("citizenarchives.user.plugin.form.nday.label"),
+								hint: $$("citizenarchives.user.plugin.form.hint.dontchange")
+							},
+						}, {
+							type: CUI.Input,
+							name: "citizenarchives__submitted_hour_crnt",
+							form: {
+								label: $$("citizenarchives.user.plugin.form.shour.label"),
+								hint: $$("citizenarchives.user.plugin.form.hint.dontchange")
+							},
+						}, {
+							type: CUI.NumberInput,
+							min: 0,
+							max: 10000,
+							name: "citizenarchives__submitted_hour",
+							form: {
+								label: $$("citizenarchives.user.plugin.form.nhour.label"),
+								hint: $$("citizenarchives.user.plugin.form.hint.dontchange")
+							},
+						}, {
+							type: CUI.Input,
+							name: "citizenarchives__submitted_minute_crnt",
+							form: {
+								label: $$("citizenarchives.user.plugin.form.sminute.label"),
+								hint: $$("citizenarchives.user.plugin.form.hint.dontchange")
+							},
+						}, {
+							type: CUI.NumberInput,
+							min: 0,
+							max: 10000,
+							name: "citizenarchives__submitted_minute",
+							form: {
+								label: $$("citizenarchives.user.plugin.form.nminute.label"),
+								hint: $$("citizenarchives.user.plugin.form.hint.dontchange")
+							},
 						}]
 					})
 					return form.start()
@@ -81,6 +88,12 @@ ez5.CitizenArchivesUserPlugin = (function(superClass) {
 
 	CitizenArchivesUserPlugin.prototype.getSaveData = function(saveData) {
 		saveData.user.custom_data.citizenarchives__already_tagged_count = this._user.data.user.custom_data.citizenarchives__already_tagged_count;
+		saveData.user.custom_data.citizenarchives__submitted_day_crnt = this._user.data.user.custom_data.citizenarchives__submitted_day_crnt;
+		saveData.user.custom_data.citizenarchives__submitted_day = this._user.data.user.custom_data.citizenarchives__submitted_day;
+		saveData.user.custom_data.citizenarchives__submitted_hour_crnt = this._user.data.user.custom_data.citizenarchives__submitted_hour_crnt;
+		saveData.user.custom_data.citizenarchives__submitted_hour = this._user.data.user.custom_data.citizenarchives__submitted_hour;
+		saveData.user.custom_data.citizenarchives__submitted_minute_crnt = this._user.data.user.custom_data.citizenarchives__submitted_minute_crnt;
+		saveData.user.custom_data.citizenarchives__submitted_minute = this._user.data.user.custom_data.citizenarchives__submitted_minute;
 	}
 
 	CitizenArchivesUserPlugin.prototype.isAllowed = function() {

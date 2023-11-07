@@ -7,18 +7,15 @@ server.config.parameter.system.citizenarchives-base.tag_chooser.label,Verdächti
 server.config.parameter.system.citizenarchives-base.tag_chooser.placeholder,Tag wählen,Choose tag
 
 server.config.parameter.system.citizenarchives-base.tag_choose1.label,Trigger-Tag wählen,Choose trigger tag
-#server.config.parameter.system.citizenarchives-base.tag_choose1.label|hint,Lorem ipsum dolor sic amet...,Lorem ipsum dolor sic amet...
 server.config.parameter.system.citizenarchives-base.tag_choose1.placeholder,Tag wählen,Choose tag
 
 server.config.parameter.system.citizenarchives-base.tag_choose2.label,Markierungs-Tag wählen,Choose marker tag
-#server.config.parameter.system.citizenarchives-base.tag_choose2.label|hint,Lorem ipsum dolor sic amet...,Lorem ipsum dolor sic amet...
 server.config.parameter.system.citizenarchives-base.tag_choose2.placeholder,Tag wählen,Choose tag
 
 server.config.parameter.system.citizenarchives-base.field-chooser.modelfield.label,Objekt & Feld,Object & field
 server.config.parameter.system.citizenarchives-base.field-chooser.modelfield.placeholder,Feld wählen,Choose field
 server.config.parameter.system.citizenarchives-base.field-chooser.model.label,Objekt,Object
 server.config.parameter.system.citizenarchives-base.field-chooser.field.label,Feld,Field
-#server.config.parameter.system.citizenarchives-base.field-chooser.field.label|hint,Lorem ipsum dolor sic amet...,Lorem ipsum dolor sic amet...
 
 
 
@@ -26,22 +23,22 @@ server.config.parameter.system.citizenarchives-base.field-chooser.field.label,Fe
 server.config.name.system.citizenarchives-criterias,Kriterien,Criterias
 
 server.config.parameter.system.citizenarchives-criterias.chatgpt_threshold.label,ChatGPT Schwellwert (0 - 100),ChatGPT threshold (0 - 100)
-server.config.parameter.system.citizenarchives-criterias.chatgpt_threshold.label|hint,"Ab welcher Problematik-Beurteilung von ChatGPT ein Eintrag getaggt wird mit 0=unproblematisch, 100=super problematisch. Empfohlen: 50.","At what level of problem assessment by ChatGPT is an entry tagged with 0=unproblematic, 100=super problematic. Recommended: 50."
+server.config.parameter.system.citizenarchives-criterias.chatgpt_threshold.label|hint,"Ab welcher Problematik-Beurteilung von ChatGPT ein Eintrag getaggt wird mit 0=unproblematisch, 100=super problematisch. Empfohlen: 50. Dies verwendet ChatGPT, um den Text zu bewerten und ihm eine Beurteilung zu geben. Es kann die Bedeutung und die Absicht auch dann genau beurteilen, wenn es Rechtschreibfehler gibt oder Teile in einer anderen Sprache verfasst sind.","At what level of problem assessment by ChatGPT is an entry tagged with 0=unproblematic, 100=super problematic. Recommended: 50. This uses ChatGPT to judge the text and give it a rating. It can accurately assess the meaning and its intention even when there spelling errors or parts are in a different language."
 server.config.parameter.system.citizenarchives-criterias.chatgpt_enabled.label,ChatGPT nutzen,Use ChatGPT
 server.config.parameter.system.citizenarchives-criterias.chatgpt_enabled.checkbox,nutzen,use it
 
 server.config.parameter.system.citizenarchives-criterias.sentiment_threshold.label,Sentimentanalyse Schwellwert (0 - 100),Sentiment analysis threshold (0 - 100)
-server.config.parameter.system.citizenarchives-criterias.sentiment_threshold.label|hint,"Ab welcher Problematik-Beurteilung der Sentimentanalyse ein Eintrag getaggt wird mit 0=unproblematisch, 100=super problematisch. Empfohlen: 50.","At what level of sentiment analysis assessment is an entry tagged with 0=unproblematic, 100=super problematic. Recommended: 50."
+server.config.parameter.system.citizenarchives-criterias.sentiment_threshold.label|hint,"Ab welcher Problematik-Beurteilung der Sentimentanalyse ein Eintrag getaggt wird mit 0=unproblematisch, 100=super problematisch. Empfohlen: 50. Dies reduziert jedes Wort auf seinen Stamm (gesagt => sagen) und vergleicht es mit Listen positiver und negativer Wörter, um an den endgültigen Wert zu gelangen.","At what level of sentiment analysis assessment is an entry tagged, with 0=unproblematic, 100=super problematic. Recommended: 50. This reduces each word to its stem (said => say) and compares it against lists of positive and negative words to arrive at its final score."
 server.config.parameter.system.citizenarchives-criterias.sentiment_enabled.label,Sentimentanalyse ausführen,Use sentiment analysis
 server.config.parameter.system.citizenarchives-criterias.sentiment_enabled.checkbox,ausführen,use it
 
 server.config.parameter.system.citizenarchives-criterias.spelling_threshold.label,Rechtschreibung Schwellwert (0 - 100),Spelling threshold (0 - 100)
-server.config.parameter.system.citizenarchives-criterias.spelling_threshold.label|hint,"Die Rechtschreibung wird eingeschätzt mit 0=alles korrekt und 100=unverhältnismäßig viele unerkannte Wörter. Empfehlung: 50.","Spelling is assessed with 0=everything correct and 100=an excessively high number of unrecognized words. Recommendation: 50."
+server.config.parameter.system.citizenarchives-criterias.spelling_threshold.label|hint,"Die Rechtschreibung wird eingeschätzt mit 0=alles korrekt und 100=unverhältnismäßig viele unerkannte Wörter. Empfehlung: 50. Dabei wird die Hunspell-Rechtschreibprüfung angewandt, die u.A. auch in OpenOffice verwendet wird, und außerdem mit 14.000 Städtenamen angereichert.","Spelling is assessed with 0=everything correct and 100=an excessively high number of unrecognized words. Recommendation: 50. The Hunspell spell checker is applied which is also used in OpenOffice, and is additionally enriched with 14,000 city names."
 server.config.parameter.system.citizenarchives-criterias.spelling_enabled.label,Rechtschreibung überprüfen,Use spelling check
 server.config.parameter.system.citizenarchives-criterias.spelling_enabled.checkbox,überprüfen,check spelling
 
 server.config.parameter.system.citizenarchives-criterias.markings_threshold.label,Übermäßige Markierungen Schwellwert (0 - 100),Excessive markings Schwellwert (0 - 100)
-server.config.parameter.system.citizenarchives-criterias.markings_threshold.label|hint,"Hier wird geprüft, wie viele Ausrufezeichen, Fragezeichen, Emojis und GANZGROẞSCHREIBUNG im Text sind. 0=keine Auffälligkeit und 100=sehr auffällig. Empfohlen: 50.","Here, it is checked how many exclamation marks, question marks, emojis, and ALL CAPS are in the text. 0=no abnormality and 100=very noticeable. Recommended: 50."
+server.config.parameter.system.citizenarchives-criterias.markings_threshold.label|hint,"Hier wird geprüft, wie viele Ausrufezeichen, Fragezeichen, Emojis und GANZGROẞSCHREIBUNG im Text sind. 0=keine Auffälligkeit und 100=sehr auffällig. Empfohlen: 50. Die Häufigkeit wird mit Normwerten von Internet-Nutzerkommentaren verglichen.","Here, it is checked how many exclamation marks, question marks, emojis, and ALL CAPS are in the text. 0=no abnormality and 100=very noticeable. Recommended: 50. The frequency gets compared to norm values of web user comments."
 server.config.parameter.system.citizenarchives-criterias.markings_enabled.label,Übermäßige Markierungen überprüfen,Check excessive markings
 server.config.parameter.system.citizenarchives-criterias.markings_enabled.checkbox,überprüfen,check it
 
@@ -95,5 +92,15 @@ _server.config.name.system.citizenarchives-secrets,API Schlüssel,API Keys
 
 
 citizenarchives.user.plugin.tab-text,Citizen Archives,Citizen Archives
+
 citizenarchives.user.plugin.form.id.label,Anzahl schon getaggter Beiträge,Amount of already tagged posts
 citizenarchives.user.plugin.form.id.hint.md,"Auf 0 zurücksetzen, um dem Nutzer wieder eine weiße Weste zu geben. Auf 1000 setzen, um alle zukünftigen Beiträge des Nutzers automatisch zu taggen.","Reset to 0 to give the user a clean slate. Set to 1000 to automatically tag all future posts by the user."
+
+citizenarchives.user.plugin.form.nday.label,Beiträge an diesem Tag,Posts on this day
+citizenarchives.user.plugin.form.nhour.label,Beiträge in dieser Stunde,Posts in this hour
+citizenarchives.user.plugin.form.nminute.label,Beiträge in dieser Minute,Posts in this minute
+citizenarchives.user.plugin.form.sday.label,Tag,Day
+citizenarchives.user.plugin.form.shour.label,Stunde,Hour
+citizenarchives.user.plugin.form.sminute.label,Minute,Minute
+
+citizenarchives.user.plugin.form.hint.dontchange,Bitte nicht ändern.,Please don't edit.

@@ -118,12 +118,16 @@ async function evaluate(context, input) {
 
 	// Execute all evaluations in parallel
 	const allPromises = []
-	let failed = false
+	const result = {
+		text,
+		evaluations,
+		failed,
+	}
 	for (const key in evalMethods) {
 		let o = {}
 		const promise = evalMethods[key](context, text, {stems})
-		promise.then((result) => {
-			o = result
+		promise.then((r) => {
+			o = r
 		})
 		.catch((err) => {
 			o.error = err.response?.data?.error?.message ?? err.message
@@ -132,33 +136,29 @@ async function evaluate(context, input) {
 			switch (key) {
 				case 'german':
 					if (context.config.flagNonGermanEnabled && o.rating===false) {
-						failed = true
+						result.failed = true
 					}
 					break
 				case 'predefinedBlocklist':
 				case 'customBlocklist':
 					if (o.rating === false) {
-						failed = true
+						result.failed = true
 					}
 					break
 				default:
 					o.threshold = context.config.evaluations[key].threshold / 100
 					if (context.config.evaluations[key].enabled && o.rating>=o.threshold) {
-						failed = true
+						result.failed = true
 					}
 					break
 			}
-			evaluations[key] = o
+			result.evaluations[key] = o
 		})
 		allPromises.push(promise)
 	}
 	await Promise.all(allPromises)
 
-	return {
-		text,
-		evaluations,
-		failed,
-	}
+	return result
 }
 
 
@@ -227,14 +227,7 @@ async function getUserInfoFromAPI(env, userId) {
 }
 
 
-
-async function increaseUserAlreadyTaggedCount(env) {
-	const session = await getSessionInfoFromAPI(env)
-	const user = await getUserInfoFromAPI(env, session.user.user._id)
-	// const prevCount = userInfo[0]?.user?.custom_data?.citizenarchives__already_tagged_count ?? 0
-	// const nextCount = prevCount + 1
-	// user[0].user.custom_data.citizenarchives__already_tagged_count = nextCount
-
+async function updateUserCustomData(env, user) {
 	const data = await fetch(env.api_url + '/api/v1/user?access_token=' + env.api_user_access_token, {
 		method: 'POST',
 		headers: {
@@ -243,162 +236,23 @@ async function increaseUserAlreadyTaggedCount(env) {
 		body: JSON.stringify([{
 			"_basetype": "user",
 			"user": {
-				"_id": user[0].user._id,
-				"custom_data": {
-					...user[0].user.custom_data,
-					"citizenarchives__already_tagged_count": (user[0].user.custom_data.citizenarchives__already_tagged_count ?? 0) + 1
-				},
-				"_version": user[0].user._version + 1
+				"_id": user._id,
+				"custom_data": user.custom_data,
+				"_version": user._version + 1
 			}
 		}])
 	})
+	// console.error("SAVING USER'S CUSTOM DATA", JSON.stringify(user.custom_data))
 	if ( ! data.ok) {
-		throw new Error("Fehler bei der Anfrage an /api/v1/user")
+		throw new Error('Fehler bei der Anfrage an /api/v1/user')
 	}
 }
 
 
-/*
-POST https://fylr.datahive.one/api/v1/user
-
-[
-   {
-	  "_basetype": "user",
-	  "user": {
-		 "_id": 5,
-		 "custom_data": {
-			"orcid": "",
-			"citizenarchives__already_tagged_count": 112
-		 },
-		 "login": "test",
-		 "last_name": "Test",
-		 "type": "easydb",
-		 "frontend_language": "de-DE",
-		 "database_languages": [
-			"de-DE",
-			"en-US"
-		 ],
-		 "search_languages": [],
-		 "first_name": "Test",
-		 "displayname": "",
-		 "mail_schedule": {
-			"timezone": "Europe/Berlin",
-			"_preset": "custom",
-			"days_of_month": [],
-			"weekdays": [],
-			"hours": []
-		 },
-		 "company": "",
-		 "department": "",
-		 "phone": "",
-		 "reference": "",
-		 "remarks": "",
-		 "address_supplement": "",
-		 "street": "",
-		 "house_number": "",
-		 "postal_code": "",
-		 "town": "",
-		 "country": "",
-		 "email": "",
-		 "state": "",
-		 "login_disabled": false,
-		 "require_password_change": false,
-		 "welcome_email": false,
-		 "confirm_email": false,
-		 "login_valid_from": null,
-		 "login_valid_to": null,
-		 "frontend_prefs": {
-			"webfrontend": {
-			   "choice_table_id": 4,
-			   "ignore_duplicate_dialog": false,
-			   "languages_user_selection": false,
-			   "quick_access_open": true,
-			   "recognize_series": true,
-			   "search_type_selector": {
-				  "objecttypes": [
-					 "baum",
-					 "gebaeude"
-				  ],
-				  "pool_ids": []
-			   },
-			   "show_languages_with_data": true,
-			   "spellcheck": false
-			}
-		 },
-		 "picture": null,
-		 "_version": 14
-	  },
-	  "_groups": [
-		 {
-			"_basetype": "group",
-			"group": {
-			   "_id": 10
-			}
-		 }
-	  ],
-	  "_acl": [],
-	  "_system_rights": {},
-	  "_collection_pin_codes": []
-   }
-]*/
 
 
 
-// const TEST_OBJECTS = [{
-//     "_callback_context": {
-//         "hash": "e7f0ac1a-61f8-4be6-86f4-8b98999ff309",
-//         "original_mask": "user_comment__all_fields"
-//     },
-//     "_collections": [],
-//     "_comment": "",
-//     "_create_user": null,
-//     "_current": null,
-//     "_format": "long",
-//     "_last_modified": "0001-01-01T00:00:00Z",
-//     "_latest_version": false,
-//     "_mask": "_all_fields",
-//     "_mask_display_name": {
-//         "und": "_all_fields"
-//     },
-//     "_objecttype": "user_comment",
-//     "_objecttype_display_name": {
-//         "de-DE": "Nutzerkommentare",
-//         "en-US": "User comments"
-//     },
-//     "_owner": null,
-//     "_published": [],
-//     "_published_count": 0,
-//     "_standard": {
-//         "1": {
-//             "text": {
-//                 "de-DE": "Kööööln",
-//                 "en-US": "Kööööln"
-//             },
-//             "html": {
-//                 "de-DE": "<span class=\"ez-format-comma>Kööööln</span>",
-//                 "en-US": "<span class=\"ez-format-comma>Kööööln</span>"
-//             }
-//         }
-//     },
-//     "_system_object_id": 0,
-//     "_tags": [{
-//         "_id": 3,
-//         "displayname": {
-//             "de-DE": "Neuer Beitrag",
-//             "en-US": "New entry"
-//         }
-//     }],
-//     "_uuid": "",
-//     "user_comment": {
-//         "_version": 1,
-//         "comment": "Kööööln"
-//     }
-// }]
-
-
-
-
-/*let rawInput = ''
+let rawInput = ''
 
 process.stdin.on('data', d => {
 	try {
@@ -474,15 +328,15 @@ process.stdin.on('end', async () => {
 
 		let r
 		switch (scriptCommand) {
-			case 'config':
-				r = context.config
-				r.userSession = await getSessionInfoFromAPI(fylrEnv)
-				r.userInfo = await getUserInfoFromAPI(fylrEnv, r.userSession.user.user._id)
-				break
+			// case 'config':
+			// 	r = context.config
+			// 	r.userSession = await getSessionInfoFromAPI(fylrEnv)
+			// 	r.userInfo = await getUserInfoFromAPI(fylrEnv, r.userSession.user.user._id)
+			// 	break
 
-			case 'env':
-				r = fylrEnv
-				break
+			// case 'env':
+			// 	r = fylrEnv
+			// 	break
 
 			case 'get-preset-blocklist':
 				r = getPresetBlocklist(context)
@@ -492,121 +346,146 @@ process.stdin.on('end', async () => {
 				r = await evaluate(context, inputBody)
 				break
 
-			// case 'test': {
-			// 	const blocklist1 = getPresetBlocklist(context).split('\n').filter(line => line.trim().length > 0)
-			// 	const blocklist2 = context.config.customBlocklist
-			// 	const blocklist = [...blocklist1, ...blocklist2]
-			// 	const {text} = inputBody
-			// 	const stems = await stemmify(context, text)
-			// 	r = 'OKAY'
-			// 	for (const word of stems) {
-			// 		if (_.contains(blocklist, word.toLowerCase())) {
-			// 			r = 'BAD'
-			// 		}
-			// 	}
-			// 	// r = await evaluate(context, inputBody)
-			// } break
-
 			case 'saving': {
-				console.error('Citizen Archives: Check for analyzing entries')//, JSON.stringify(inputBody.objects))
+				// console.error('Citizen Archives: Check for analyzing entries')//, JSON.stringify(inputBody.objects))
+				try {
+					let isRepeatOffender = false
 
-				let doTagEntryForUser = false
-
-				// check whether this user already has too many tagged entries and thus gets auto-tagged
-				const userSession = await getSessionInfoFromAPI(fylrEnv)
-				const userInfo = await getUserInfoFromAPI(fylrEnv, userSession.user.user._id)
-				const alreadyTaggedCount = userInfo[0].user.custom_data.citizenarchives__already_tagged_count ?? 0
-				if (alreadyTaggedCount >= context.config.flagRepeatOffendersAfterN) {
-					doTagEntryForUser = true
-				}
-
-				// console.error("...checking repeat user, userId="+userInfo[0].user._id+", alreadyTaggedCount="+alreadyTaggedCount+", config max="+context.config.flagRepeatOffendersAfterN+", doTagEntryForUser="+(doTagEntryForUser? 'yes' : 'no'))
-
-				// check 
-				const allModelIdsToCheck = context.config.applyFields.map(entry => entry.model)
-				const schema = await getCurrentSchemaFromAPI(fylrEnv)
-				// const objects = TEST_OBJECTS
-				for (const newObject of inputBody.objects) {
-					// find model id
-					let tableName = null
-					let newObjectTableId = null
-					for (const table of schema.tables) {
-						if (table.name === newObject._objecttype) {
-							newObjectTableId = table.table_id
-							tableName = table.name
-							break
-						}
+					// check whether this user already has too many tagged entries and thus gets auto-tagged
+					const userSession = await getSessionInfoFromAPI(fylrEnv)
+					const userInfo = await getUserInfoFromAPI(fylrEnv, userSession.user.user._id)
+					const user = userInfo[0].user
+					const alreadyTaggedCount = user.custom_data?.citizenarchives__already_tagged_count ?? 0  // TODO: Test that it works without plugin and with a new new then activate plugin again
+					if (alreadyTaggedCount >= context.config.flagRepeatOffendersAfterN) {
+						isRepeatOffender = true
 					}
-					if ( ! newObjectTableId) {
-						console.error("...can't find new object's table id for "+newObject._objecttype)
-						continue
+
+					// check and handle spam
+					let isSpamming = false
+					if (context.config.rateLimitingEnabled) {
+						const MAX_DAY=1000, MAX_HOUR=100, MAX_MINUTE=8
+
+						const now = new Date()
+						const thisDay    = now.getFullYear() + '-' + ('0'+(now.getMonth()+1)).slice(-2) + '-' + ('0'+now.getDate()).slice(-2)
+						const thisHour   = now.getFullYear() + '-' + ('0'+(now.getMonth()+1)).slice(-2) + '-' + ('0'+now.getDate()).slice(-2) + ' ' + ('0' + now.getHours()).slice(-2)
+						const thisMinute = now.getFullYear() + '-' + ('0'+(now.getMonth()+1)).slice(-2) + '-' + ('0'+now.getDate()).slice(-2) + ' ' + ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2)
+
+						const checkIsSpamAndIncCount = (user, thisTime, propTime, propCount, maxCount) => {
+							let isSpamming = false
+							const customData = user.custom_data ?? {}
+							const crntCount = customData[propCount] ?? 0
+							const crntTime = customData[propTime] ?? ''
+							if (crntTime === thisTime) {
+								isSpamming = crntCount >= maxCount
+								customData[propCount] = crntCount + 1
+							}
+							else {
+								customData[propTime] = thisTime
+								customData[propCount] = 0
+							}
+						}
+
+						isSpamming = checkIsSpamAndIncCount(user, thisDay, 'citizenarchives__submitted_day_crnt', 'citizenarchives__submitted_day', MAX_DAY) || 
+							checkIsSpamAndIncCount(user, thisHour, 'citizenarchives__submitted_hour_crnt', 'citizenarchives__submitted_hour', MAX_HOUR) || 
+							checkIsSpamAndIncCount(user, thisMinute, 'citizenarchives__submitted_minute_crnt', 'citizenarchives__submitted_minute', MAX_MINUTE)
+						// console.error('checked rates, isSpamming=', isSpamming, 'user=', user)
 					}
-					for (const check of context.config.applyFields) {
-						// invalid entry?
-						if (check.model===null || check.field===null || check['marking-tag']===null) {
-							console.error("...no match: Invalid check")
+
+					// check 
+					const allModelIdsToCheck = context.config.applyFields.map(entry => entry.model)
+					const schema = await getCurrentSchemaFromAPI(fylrEnv)
+					for (const newObject of inputBody.objects) {
+						// find model id
+						let tableName = null
+						let newObjectTableId = null
+						for (const table of schema.tables) {
+							if (table.name === newObject._objecttype) {
+								newObjectTableId = table.table_id
+								tableName = table.name
+								break
+							}
+						}
+						if ( ! newObjectTableId) {
+							console.error("...can't find new object's table id for "+newObject._objecttype)
 							continue
 						}
-						// no match for object type?
-						if (check.model !== newObjectTableId) {
-							console.error("...no match: Different object type")
-							continue
-						}
-						// no match for trigger tag?
-						if (check['trigger-tag']!==null && newObject._tags.map(tag => tag._id).indexOf(check['trigger-tag']) === -1) {
-							console.error("...no match: Trigger tag not set on this entry")
-							continue
-						}
-						let doTagEntry = doTagEntryForUser
-						if ( ! doTagEntry) {
-							// 
-							let columnName = null
-							for (const table of schema.tables) {
-								if (table.table_id !== check.model) {
-									continue
-								}
-								for (const column of table.columns) {
-									if (column.column_id === check.field) {
-										columnName = column.name
+						for (const check of context.config.applyFields) {
+							// invalid entry?
+							if (check.model===null || check.field===null || check['marking-tag']===null) {
+								// console.error("...no match: Invalid check")
+								continue
+							}
+							// no match for object type?
+							if (check.model !== newObjectTableId) {
+								// console.error("...no match: Different object type")
+								continue
+							}
+							// no match for trigger tag?
+							if (check['trigger-tag']!==null && newObject._tags.map(tag => tag._id).indexOf(check['trigger-tag']) === -1) {
+								// console.error("...no match: Trigger tag not set on this entry")
+								continue
+							}
+							let doTagEntry = isRepeatOffender || isSpamming
+							if (isRepeatOffender) {
+								// console.error("...flagged because repeat offender")
+							}
+							if (isSpamming) {
+								// console.error("...flagged because spam rate exceeded")
+							}
+							if ( ! doTagEntry) {
+								// console.error("...will evaluate")
+								// 
+								let columnName = null
+								for (const table of schema.tables) {
+									if (table.table_id !== check.model) {
+										continue
+									}
+									for (const column of table.columns) {
+										if (column.column_id === check.field) {
+											columnName = column.name
+											break
+										}
+									}
+									if (columnName) {
 										break
 									}
 								}
-								if (columnName) {
-									break
+								if ( ! columnName) {
+									console.error("...no match: Can't find column "+check.field)
+									continue
+								}
+								const textToCheck = newObject[tableName][columnName]
+
+								const evaluation = await evaluate(context, {text: textToCheck})
+								// console.error('...evaluation: '+(evaluation.failed? 'FAILED' : 'PASSED'), JSON.stringify(evaluation))
+								if (evaluation.failed) {
+									doTagEntry = true
 								}
 							}
-							if ( ! columnName) {
-								console.error("...no match: Can't find column "+check.field)
-								continue
+							if (doTagEntry) {
+								// add marking tags
+								const newTagId = check['marking-tag']
+								newObject._tags.push({
+									_id: newTagId
+								})
+								// increase tagged count for user
+								if (typeof user.custom_data.citizenarchives__already_tagged_count === 'undefined') {
+									user.custom_data.citizenarchives__already_tagged_count = 0
+								}
+								user.custom_data.citizenarchives__already_tagged_count += 1
 							}
-							// console.error('tableName=', tableName, 'columnName=', columnName)
-							const textToCheck = newObject[tableName][columnName]
-
-							const evaluation = await evaluate(context, {text: textToCheck})
-							console.error('...evaluation: '+(evaluation.failed? 'FAILED' : 'PASSED'))
-							if (evaluation.failed) {
-								doTagEntry = true
-							}
-						}
-						if (doTagEntry) {
-							// newObject[tableName][columnName] += ' Teeeeeest appendum'
-							// add marking tags
-							// TODO: Make it work!
-							const newTagId = check['marking-tag']
-							newObject._tags.push({
-								_id: newTagId
-							})
-							// increase tagged count for user
-							await increaseUserAlreadyTaggedCount(fylrEnv)
 						}
 					}
+					await updateUserCustomData(fylrEnv, user)
 				}
-				// console.error("Already tagged", alreadyTaggedCount)
-				// console.error()
+				catch (err) {
+					console.error("...error", err.message)
+				}
 				const result = {objects: inputBody.objects}
 				// console.error('RESULT', JSON.stringify(result))
 				console.log(JSON.stringify(result))
 			} break
+
 
 			default:
 				console.log("Unknown or missing command", scriptCommand)
@@ -624,7 +503,7 @@ process.stdin.on('end', async () => {
 			error: err.message,
 		}, null, 4))
 	}
-})*/
+})
 
 
 
