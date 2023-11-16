@@ -83,10 +83,10 @@ async function evalSentiment(context, text, {stems}) {
 	return {
 		rating: Math.max(0, Math.min(1.0, - r * WORD_FACTOR)),
 		details: {
-			'All word stems': stems,
-			'Positive words': positives,//.length? positives : undefined,
-			'Negative words': negatives,//.length? negatives : undefined,
-			'Terrible words': terribles,//.length? terribles : undefined,
+			stems: stems,
+			positives: positives,//.length? positives : undefined,
+			negatives: negatives,//.length? negatives : undefined,
+			terribles: terribles,//.length? terribles : undefined,
 		},
 		time: (new Date().getTime() - start) / 1000,
 	}

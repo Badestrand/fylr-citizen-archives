@@ -58,7 +58,7 @@ async function evalIsInPredefinedBlocklist(context, text, {stems}) {
 	return {
 		rating: matches.length===0,
 		details: {
-			'Matches': matches,
+			matches: matches,
 		},
 		time: (new Date().getTime() - start) / 1000,
 	}
@@ -76,7 +76,7 @@ async function evalIsInCustomBlocklist(context, text, {stems}) {
 	return {
 		rating: matches.length===0,
 		details: {
-			'Matches': matches,
+			matches: matches,
 		},
 		time: (new Date().getTime() - start) / 1000,
 	}
@@ -121,7 +121,7 @@ async function evaluate(context, input) {
 	const result = {
 		text,
 		evaluations,
-		failed,
+		failed: false,
 	}
 	for (const key in evalMethods) {
 		let o = {}

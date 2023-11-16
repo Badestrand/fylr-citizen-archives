@@ -1,5 +1,5 @@
 # https://datascience.stackexchange.com/questions/57191/is-there-a-good-german-stemmer:
-# pip install HanTa numpy nltk
+# pip install HanTa numpy
 
 import sys
 import subprocess

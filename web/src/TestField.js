@@ -27,7 +27,7 @@ class TestFieldConfig extends BaseConfigPlugin {
                 element: (dataField) =>
                     new CUI.Label({
                         multiline: true,
-                        text: "Testen Sie hier Texte und sehen Sie, wie diese beurteilt werden.",
+                        text: $$("server.config.parameter.system.citizenarchives-testing.testfield.caption"),
                         markdown: true
                     })
             }, {
@@ -55,40 +55,40 @@ class TestFieldConfig extends BaseConfigPlugin {
 
 
     exec(context, text) {
-        this.setResultText(context, "Lade...")
+        this.setResultText(context, $$("server.config.parameter.system.citizenarchives-testing.testfield.loading"))
         CitizenArchivesAPI.evaluate(text).then((result) => {
             const {text, evaluations} = result
 
             let textParts = []
 
             const headlines = {
-                markings: 'Übermäßige Markierungen',
-                spelling: 'Rechtschreibung',
-                sentiment: 'Sentiment',
-                german: 'Deutsche Sprache',
-                chatgpt: 'ChatGPT',
-                predefinedBlocklist: 'Vorgefertigte Blockliste',
-                customBlocklist: 'Eigene Blockliste',
+                markings: $$("server.config.parameter.system.citizenarchives-testing.testfield.markings"),
+                spelling: $$("server.config.parameter.system.citizenarchives-testing.testfield.spelling"),
+                sentiment: $$("server.config.parameter.system.citizenarchives-testing.testfield.sentiment"),
+                german: $$("server.config.parameter.system.citizenarchives-testing.testfield.german"),
+                chatgpt: $$("server.config.parameter.system.citizenarchives-testing.testfield.chatgpt"),
+                predefinedBlocklist: $$("server.config.parameter.system.citizenarchives-testing.testfield.predefinedBlocklist"),
+                customBlocklist: $$("server.config.parameter.system.citizenarchives-testing.testfield.customBlocklist"),
             }
 
             if (result.error) {
-                this.setResultText(context, 'Fehler: '+result.error)
+                this.setResultText(context, $$("server.config.parameter.system.citizenarchives-testing.testfield.error")+': '+result.error)
             }
             else {
-                textParts.push("Fazit: "+(result.failed? "Sollte überprüft werden." : "Keine Auffälligkeiten über Schwellwerten gefunden.")+"\n")
+                textParts.push($$("server.config.parameter.system.citizenarchives-testing.testfield.result")+": "+(result.failed? $$("server.config.parameter.system.citizenarchives-testing.testfield.result-bad") : $$("server.config.parameter.system.citizenarchives-testing.testfield.result"))+"\n")
 
                 for (const key in headlines) {
                     const {rating, details, threshold} = evaluations[key]
                     let text = ''
                     text += headlines[key]+': '
                     if (typeof rating === 'boolean') {
-                        text += rating? 'okay' : 'nicht okay'
+                        text += rating? $$("server.config.parameter.system.citizenarchives-testing.testfield.okay") : $$("server.config.parameter.system.citizenarchives-testing.testfield.not-okay")
                     } else {
-                        text += Math.round(rating*100)+'% problematisch bei Schwellwert von '+Math.round(threshold*100)+'%'
+                        text += Math.round(rating*100)+'% '+$$("server.config.parameter.system.citizenarchives-testing.testfield.problematic")+' '+Math.round(threshold*100)+'%'
                     }
                     text += '\n'
-                    for (const descr in details) {
-                        text += '...' + descr + ': ' + this.stringifyValue(details[descr]) + '\n'
+                    for (const descrKey in details) {
+                        text += '...' + $$("server.config.parameter.system.citizenarchives-testing.testfield."+key+"."+descrKey) + ': ' + this.stringifyValue(details[descrKey]) + '\n'
                     }
                     textParts.push(text)
                 }
@@ -110,6 +110,9 @@ class TestFieldConfig extends BaseConfigPlugin {
     stringifyValue(value) {
         if (value===null || value===undefined || value==='' || (Array.isArray(value) && value.length===0)) {
             return '-'
+        }
+        if (value===true || value===false) {
+            return value? $$("server.config.parameter.system.citizenarchives-testing.testfield.yes") : $$("server.config.parameter.system.citizenarchives-testing.testfield.no")
         }
         if (Array.isArray(value)) {
             return value.join(', ')

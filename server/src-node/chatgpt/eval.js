@@ -63,7 +63,7 @@ async function evalChatGPT(context, text, {stems}) {
 	return {
 		rating,
 		details: {
-			'Reasoning': reasoning,
+			reasoning: reasoning,
 		},
 		time: (new Date().getTime() - start) / 1000,
 	}

@@ -15,17 +15,17 @@ class BlocklistPresetConfig extends BaseConfigPlugin {
                         content: [
                             new CUI.Label({
                                 multiline: true,
-                                text: "Es wird eine vorgefertigte Blockliste mitgeliefert, deren Wortinhalte zum Markieren führt.",
+                                text: $$("server.config.parameter.system.citizenarchives-testing.testfield.preset_blocklist.descr"),
                                 markdown: true
                             }),
                             new CUI.HorizontalList({
                                 content: [
                                     new CUI.Button({
-                                        text: "Anzeigen",
+                                        text: $$("server.config.parameter.system.citizenarchives-testing.testfield.preset_blocklist.show"),
                                         onClick: this.showBlocklist.bind(this)
                                     }),
                                     new CUI.Button({
-                                        text: "Download",
+                                        text: $$("server.config.parameter.system.citizenarchives-testing.testfield.preset_blocklist.download"),
                                         onClick: this.downloadBlocklist.bind(this)
                                     }),
                                 ]

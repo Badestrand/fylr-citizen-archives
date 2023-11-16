@@ -114,9 +114,9 @@ function evalExcessiveMarkingsUppercase(metrics) {
 	return {
 		rating,
 		details: {
-			'Uppercase characters': metrics.uppercase,
-			'Lowercase chararacters': metrics.lowercase,
-			'Ratio of uppercase characters': ratioUppercase,
+			uppercase: metrics.uppercase,
+			lowercase: metrics.lowercase,
+			ratio: ratioUppercase,
 		}
 	}
 }
@@ -144,7 +144,7 @@ function evalExcessiveMarkingsExclamationQuestionMarks(metrics) {
 		return {
 			rating,
 			details: {
-				'Excessive marks': longestMatch,
+				excessiveMarks: longestMatch,
 			}
 		}
 	}
@@ -205,8 +205,8 @@ function evalExcessiveMarkingsEmojis(text) {
 	return {
 		rating,
 		details: {
-			'Emoji count': emojiCount,
-			'Emoji ratio': emojiCount / chars.length,
+			emojiCount: emojiCount,
+			emojiRatio: emojiCount / chars.length,
 		}
 	}
 }
@@ -236,9 +236,9 @@ function evalExcessiveMarkingsNormals(text) {
 	return {
 		rating,
 		details: {
-			'Total character count': totalCharacterCount,
-			'Normal character count': normalCharacterCount,
-			'Normal character ratio': normalRatio,
+			totalCharacterCount,
+			normalCharacterCount,
+			normalRatio,
 		}
 	}
 }
